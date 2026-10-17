@@ -1,0 +1,270 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{iftex}
+\usepackage[T1]{fontenc}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+\fi
+\usepackage[australian]{babel} % Australian dates, e.g. 17 October 2026.
+\usepackage[type1]{ebgaramond} % Local \ebgaramond command for the applicant name.
+\usepackage{charter} % Original serif family, selected locally for personal details.
+\usepackage{tgpagella} % Keep Pagella as the body font after loading the other fonts.
+\usepackage[
+  left=1in,
+  right=1in,
+  top=19mm,
+  bottom=31mm,  % keep the total sum of top and bottom equal to 50mm
+  footskip=12mm
+]{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fontawesome5}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{etoolbox}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{BodyInk}{HTML}{000000}
+\definecolor{MutedInk}{HTML}{444444}
+\definecolor{UQPurple}{HTML}{51247A}
+\definecolor{RuleInk}{HTML}{D8D0DE}
+
+\newcommand{\placeholder}[1]{[#1]}
+\newcommand{\ContactIcon}[1]{\makebox[1.4em][l]{\textcolor{UQPurple}{#1}}}
+\newcommand{\UQLogoFile}{assets/uq-logo.png}
+\newcommand{\UQLogoWidth}{0.43\textwidth} % Keep within the 0.50\textwidth logo column.
+
+% --------------------------------------------------------------------------
+% EDIT HERE: APPLICANT
+% Generic personal fields with UQ's institution and campus address as defaults.
+% --------------------------------------------------------------------------
+\newcommand{\ApplicantName}{Your Name}
+\newcommand{\ApplicantRole}{Your Position} % Displayed in bold below your name.
+\newcommand{\ApplicantAffiliation}{The University of Queensland} % Optional.
+\newcommand{\ApplicantAddress}{} % Optional street/campus address; \\ separates lines.
+\newcommand{\ApplicantEmail}{your.email@example.com}
+\newcommand{\ApplicantPhone}{\placeholder{Phone number}} % Replace with your current number.
+\newcommand{\ApplicantLocation}{St Lucia, QLD 4072, Australia} % Optional campus address.
+\newcommand{\ApplicantWebsite}{https://example.com/} % Optional URL.
+\newcommand{\ApplicantWebsiteLabel}{https://example.com/}
+
+% --------------------------------------------------------------------------
+% EDIT HERE: APPLICATION
+% For a fixed date, replace \today with e.g. 17 October 2026.
+% A named contact is preferable; otherwise use a role such as Hiring Manager.
+% --------------------------------------------------------------------------
+\newcommand{\LetterDate}{\today}
+\newcommand{\RecipientName}{\placeholder{Contact name or Hiring Manager}}
+\newcommand{\RecipientTitle}{} % Optional, e.g. Recruitment Coordinator.
+\newcommand{\EmployerName}{\placeholder{Organisation name}}
+\newcommand{\EmployerAddress}{% Optional; use {} for an online-only application.
+  \placeholder{Street address}\\
+  \placeholder{City, state and postcode}%
+}
+\newcommand{\PositionTitle}{\placeholder{Position title}}
+\newcommand{\JobReference}{} % Optional, e.g. R-12345.
+\newcommand{\Salutation}{Dear \RecipientName,}
+\newcommand{\LetterClosing}{Kind regards,}
+\newcommand{\Enclosures}{R\'{e}sum\'{e}} % Optional; list only files actually attached.
+\newcommand{\SignatureFile}{} % Optional path to your own signature image/PDF.
+
+% --------------------------------------------------------------------------
+% LAYOUT: generally no edits needed below this point, except the letter body.
+% --------------------------------------------------------------------------
+\fancyfootinit{\color{UQPurple}} % Match the upper rule, with a lighter 0.4pt weight.
+\fancypagestyle{firstpage}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+\fancypagestyle{followingpages}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+\pagestyle{followingpages}
+\setlength{\headheight}{14pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.75em}
+\setlength{\emergencystretch}{1.5em}
+\raggedbottom
+\urlstyle{same}
+
+% pdfLaTeX needs this mapping; the editor's XeTeX engine handles it itself.
+\ifPDFTeX
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\fi
+\hypersetup{
+  pdftitle={Cover letter},
+  pdfauthor={\ApplicantName},
+  pdfsubject={Application cover letter}
+}
+
+% FZU-inspired header: logo and personal details share one vertically centred row.
+% Normal document flow lets the header grow safely when optional fields are used.
+\newcommand{\MakeLetterHeader}{%
+  \begingroup
+  \setlength{\parskip}{0pt}%
+  \renewcommand{\tabularxcolumn}[1]{m{##1}}%
+  \noindent
+  \begin{tabularx}{\textwidth}{%
+    @{}m{0.50\textwidth}@{\hspace{5mm}}%
+    !{\color{RuleInk}\vrule width 0.8pt}%
+    @{\hspace{3mm}}>{\raggedright\arraybackslash}X@{}%
+  }
+
+    \includegraphics[width=\UQLogoWidth]{\UQLogoFile}
+    &
+    % Applicant Name
+    {\fontfamily{phv}\fontseries{b}
+      \fontsize{15}{17}\selectfont
+      \color{UQPurple}%
+      \ApplicantName\par}%
+
+    \vspace{0mm}%
+
+    % Personal Details
+    {\fontfamily{phv}\fontsize{9}{14}\selectfont
+      \color{MutedInk}%
+
+      % Position + Institution
+      \noindent\hspace*{0.3mm}%
+      \ifdefempty{\ApplicantRole}{}{%
+        {\bfseries\color{BodyInk}\ApplicantRole}%
+      }%
+      \ifdefempty{\ApplicantAffiliation}{}{%
+        \ifdefempty{\ApplicantRole}{}{\enspace|\enspace}%
+        \ApplicantAffiliation
+      }%
+      \par
+
+      % Address
+      \ifdefempty{\ApplicantAddress}{}{%
+        \ApplicantAddress\par
+      }%
+
+      % Location
+      \ifdefempty{\ApplicantLocation}{}{%
+        \ContactIcon{\faIcon{map-marker-alt}}%
+        \ApplicantLocation\par
+      }%
+
+      % Phone
+      \ifdefempty{\ApplicantPhone}{}{%
+        \ContactIcon{\faPhone}%
+        \ApplicantPhone\par
+      }%
+
+      % Email
+      \href{mailto:\ApplicantEmail}{%
+        \ContactIcon{\faEnvelope}\ApplicantEmail
+      }\par
+
+      % Website
+      \ifdefempty{\ApplicantWebsite}{}{%
+        \href{\ApplicantWebsite}{%
+          \ContactIcon{\faGlobe}\ApplicantWebsiteLabel
+        }\par
+      }%
+    }%
+
+    \\
+  \end{tabularx}\par
+  \vspace{4mm}%
+  {\color{UQPurple}\hrule height 0.6pt}%
+  \endgroup
+  \vspace{5mm}%
+}
+
+% Give a visible build-log reminder if later edits make the letter too long.
+\AtEndDocument{%
+  \ifnum\value{page}>1\relax
+    \PackageWarningNoLine{uq-cover-letter}{Letter exceeds one page.
+      Review the employer's length requirements and shorten if appropriate}%
+  \fi
+}
+
+\begin{document}
+\thispagestyle{firstpage}
+\color{BodyInk}
+
+\MakeLetterHeader
+
+\LetterDate\par
+\vspace{3mm}
+
+\begingroup
+\setlength{\parskip}{0pt}
+\RecipientName\par
+\ifdefempty{\RecipientTitle}{}{\RecipientTitle\par}
+\EmployerName\par
+\ifdefempty{\EmployerAddress}{}{\EmployerAddress\par}
+\endgroup
+
+\vspace{3mm}
+\Salutation\par
+
+{\bfseries\color{UQPurple}
+  Re: \PositionTitle
+  \ifdefempty{\JobReference}{}{\space (Reference: \JobReference)}\par
+}
+
+% --------------------------------------------------------------------------
+% EDIT HERE: LETTER BODY
+% These are editable sentence scaffolds, not claims about your experience.
+% Remove or rewrite the prompts; the paragraph labels are comments only.
+% --------------------------------------------------------------------------
+
+% Paragraph 1: Lead with your strongest relevant qualification and role fit.
+I am applying for the \PositionTitle{} position at \EmployerName{}.
+My background in \placeholder{discipline or qualification}, together with
+\placeholder{most relevant experience or achievement}, has prepared me to
+\placeholder{specific contribution to this role}. I am particularly interested
+in the opportunity to \placeholder{brief, role-specific motivation}.
+
+% Paragraph 2: Connect researched employer priorities with your motivation.
+Your work on \placeholder{specific project, service or strategic priority}
+interests me because \placeholder{a considered reason grounded in your experience}.
+The emphasis on \placeholder{a relevant organisational goal or value} aligns
+with my experience in \placeholder{related activity}. I would welcome the
+opportunity to support \placeholder{a specific team objective} through
+\placeholder{relevant knowledge or capability}.
+
+% Paragraph 3: Prove contribution with a concise situation/action/result example.
+In \placeholder{a relevant role, research project or teaching context}, I was
+responsible for \placeholder{a task linked to an advertised selection criterion}.
+I \placeholder{describe your own actions, methods and collaboration}, resulting
+in \placeholder{a verifiable outcome; quantify only where supported}.
+This experience demonstrates my ability to \placeholder{key skill required by
+the role} and would help me \placeholder{explain its value to this employer}.
+I also bring \placeholder{a complementary skill}, demonstrated by
+\placeholder{one brief supporting example}.
+
+% Paragraph 4: Close with interest, appreciation and an invitation to discuss.
+I would welcome the opportunity to discuss how my experience could contribute
+to \placeholder{the team's intended outcome}. Please find my
+\placeholder{documents requested in the advertisement} attached.
+Thank you for considering my application. I am available for further discussion
+and can be contacted using the details above.
+
+% Keep the closing together if the body is edited near a page boundary.
+\par\vspace{2mm}
+\begin{minipage}{\linewidth}
+  \LetterClosing\par
+  \ifdefempty{\SignatureFile}{%
+    \vspace{8mm} % Space for an optional handwritten signature.
+  }{%
+    \vspace{2mm}%
+    \includegraphics[height=10mm]{\SignatureFile}\par
+    \vspace{2mm}%
+  }%
+  \textbf{\ApplicantName}\par
+  \ifdefempty{\Enclosures}{}{%
+    \vspace{2mm}%
+    {\small\color{MutedInk}Encl.: \Enclosures\par}%
+  }
+\end{minipage}
+
+\end{document}
